@@ -42,8 +42,7 @@
 .auth-form-container, .login-form, .register-form, .glowna-styl  {
   display: flex;
   flex-direction: column;
-  background-image: url("https://cdn.wallpapersafari.com/77/41/hXEfqI.jpg");
-  opacity: 0.99;
+  background: rgba(0, 0, 0, 0.7);
   margin-top: 2rem;
 }
 

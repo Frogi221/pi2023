@@ -33,6 +33,8 @@ import { Login } from "./Login";
 import { Register } from "./Register";
 import { Glowna } from "./Glowna";
 import { Haslo } from "./Haslo";
+import Contact from "./Kontakt";
+
 
 
 
@@ -46,7 +48,7 @@ function App() {
           <Route path="/register" element={<Register />} />
           <Route path="/glowna" element={<Glowna />} />
           <Route path="/haslo" element={<Haslo />} />
-
+          <Route path="/kontakt" element={<Contact />} />
 
         </Routes>
       </Router>
