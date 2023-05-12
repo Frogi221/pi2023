@@ -28,7 +28,6 @@ export const Glowna = (props) => {
       time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
       location: "",
       description: "",
-      injuries: "",
       image: null,
     });
   };
@@ -37,38 +36,45 @@ export const Glowna = (props) => {
     setFormData({ ...formData, image: event.target.files[0] });
   };
 
-  const getLocation = () => {
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        setFormData({
-          ...formData,
-          location: `${position.coords.latitude}, ${position.coords.longitude}`,
-        });
-      },
-      (error) => {
-        console.log(error);
-      }
-    );
-  };
   const handleLocation = () => {
     if (userLocation) {
       const { latitude, longitude } = userLocation;
       const apiKey = "ee0d24b485f54bf1ba02b51f21945de3";
       const url = `https://api.opencagedata.com/geocode/v1/json?q=${latitude}+${longitude}&key=${apiKey}&pretty=1`;
-  
+
       fetch(url)
         .then((response) => response.json())
         .then((data) => {
           const address = data.results[0].formatted;
           setFormData({ ...formData, location: address });
-          console.log({data.results[0].formatted})
         })
         .catch((error) => {
           console.log(error);
         });
     }
   };
-  
+
+  const getLocation = () => {
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const apiKey = "ee0d24b485f54bf1ba02b51f21945de3";
+        const url = `https://api.opencagedata.com/geocode/v1/json?q=${position.coords.latitude}+${position.coords.longitude}&key=${apiKey}&pretty=1`;
+
+        fetch(url)
+          .then((response) => response.json())
+          .then((data) => {
+            const address = data.results[0].formatted;
+            setFormData({ ...formData, location: address });
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
+  };
 
   return (
     <div className="glowna-styl">
@@ -89,44 +95,57 @@ export const Glowna = (props) => {
           <input
             type="time"
             name="time"
-            value={formData.time}
-            onChange={handleInputChange}
-            required
-          />
-        </label>
-        <label>
-          Lokalizacja:
-          <input
-            type="text"
-             name="location"
-             value={formData.location}
-             onChange={handleInputChange}
-             required
-          />
-          <button type="button" onClick={getLocation}>
-            Ustaw lokalizację z przeglądarki
-          </button>
-        </label>
-        <label>
-          Opis:
-          <textarea
-            name="description"
-            value={formData.description}
-            onChange={handleInputChange}
-            required
-          />
-        </label>
-        <label>
-          Zdjęcie:
-          <input
-            type="file"
-            accept="image/*"
-            onChange={handleImageChange}
-          />
-        </label>
-
-        <button type="submit">Dodaj</button>
-      </form>
+        value={formData.time}
+        onChange={handleInputChange}
+        required
+      />
+    </label>
+    <label>
+      Lokalizacja zdarzenia:
+      <input
+        type="text"
+        name="location"
+        value={formData.location}
+        onChange={handleInputChange}
+        onBlur={handleLocation}
+        required
+      />
+      <button type="button" onClick={getLocation}>
+        Ustaw moją lokalizację
+      </button>
+    </label>
+    <label>
+      Opis zdarzenia:
+      <textarea
+        name="description"
+        value={formData.description}
+        onChange={handleInputChange}
+        required
+      />
+    </label>
+    <label>
+      Zdjęcie:
+      <input type="file" accept="image/*" onChange={handleImageChange} />
+    </label>
+    <button type="submit">Dodaj zdarzenie</button>
+  </form>
+  {addedData && (
+    <div>
+      <h2>Dodano następujące zdarzenie:</h2>
+      <p>Data: {addedData.date}</p>
+      <p>Godzina: {addedData.time}</p>
+      <p>Lokalizacja: {addedData.location}</p>
+      <p>Opis: {addedData.description}</p>
+      {addedData.image && (
+        <img
+          src={URL.createObjectURL(addedData.image)}
+          alt="Zdjęcie zdarzenia"
+        />
+      )}
     </div>
-  );
+  )}
+</div>
+);
 };
+
+export default Glowna;
